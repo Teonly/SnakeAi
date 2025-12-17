@@ -16,9 +16,9 @@ font = pygame.font.SysFont(None, 30)
 
 snake_x = 300  # var para as informações da cobra
 snake_y = 300
-
+pontuation = 0 #pontuation :p
 base_move_delay = 150  # tempo ok de passo inicial
-move_delay = max(50, base_move_delay - pontuation * 5) #fica mais rapido com apontuação, maximo para não ter vel infinita
+
 
 last_move = pygame.time.get_ticks()
 
@@ -35,14 +35,14 @@ snake_body = [(snake_x, snake_y)]  # corpo da cobra
 clock = pygame.time.Clock()
 
 game_over = False  # autoexplicativo
-pontuation = 0 #pontuation :p
+
 running = True  # lopzinho de cria
-while running:  # enquanto ta rodando roda, soq em ingles kkkkkk
+while running:  # enquanto ta rodando roda, soq em ingles
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False  # se não tiver rodando não roda
-
+    move_delay = max(50, base_move_delay - pontuation * 5) #fica mais rapido com apontuação, maximo para não ter vel infinita
     keys = pygame.key.get_pressed()  # essa biblioteca já le o teclado, facilitou muito
 
     # se morreu, trava tudo e espera o reset
@@ -134,3 +134,4 @@ while running:  # enquanto ta rodando roda, soq em ingles kkkkkk
 
 pygame.quit()
 sys.exit() #gg
+
