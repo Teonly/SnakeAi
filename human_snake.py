@@ -25,14 +25,19 @@ last_move = pygame.time.get_ticks()
 # começa andando pra direita tipo o game de verdade
 dir_x = 1
 dir_y = 0
-
-food_size = GRID_SIZE  # var em ingles pq é universal né pae B)
-
-food_x = random.randrange(0, WIDTH, GRID_SIZE)
-food_y = random.randrange(0, HEIGHT, GRID_SIZE)
-
 snake_body = [(snake_x, snake_y)]  # corpo da cobra
 clock = pygame.time.Clock()
+
+food_size = GRID_SIZE  # var em ingles pq é universal né pae B)
+def spawn_food(snake_body):
+    while True:
+        x = random.randrange(0, WIDTH, GRID_SIZE)
+        y = random.randrange(0, HEIGHT, GRID_SIZE)
+
+        # garante que a comida não nasce dentro da cobra
+        if (x, y) not in snake_body:
+            return x, y
+
 
 game_over = False  # autoexplicativo
 
@@ -133,5 +138,6 @@ while running:  # enquanto ta rodando roda, soq em ingles
     clock.tick(60)  # pra n ser maluco esse tempo tá ok
 
 pygame.quit()
-sys.exit() #gg
+sys.exit()
+ #gg
 
