@@ -118,18 +118,4 @@ O projeto está em desenvolvimento ativo. O jogo base está estável e completo,
 - Ainda não há algoritmos avançados de pathfinding ou aprendizado  
 - O foco está na clareza da lógica, não na otimização de desempenho  
 
----
 
-## Future Plans / Planos Futuros (EN/PT)
-
-**EN:**
-- Improve AI decision-making strategies  
-- Experiment with heuristic-based and rule-based approaches  
-- Refactor code for better separation of concerns  
-- Add visualization tools for AI behavior and decision processes  
-
-**PT:**
-- Melhorar as estratégias de tomada de decisão da IA  
-- Experimentar abordagens heurísticas e baseadas em regras  
-- Refatorar o código para melhor separação de responsabilidades  
-- Adicionar visualizações para o comportamento e as decisões da IA  
