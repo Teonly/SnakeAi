@@ -16,19 +16,20 @@ font = pygame.font.SysFont(None, 30)
 
 snake_x = 300  # var para as informações da cobra
 snake_y = 300
-pontuation = 0 #pontuation :p
+pontuation = 0  # pontuation :p
 base_move_delay = 150  # tempo ok de passo inicial
-
 
 last_move = pygame.time.get_ticks()
 
 # começa andando pra direita tipo o game de verdade
 dir_x = 1
 dir_y = 0
+
 snake_body = [(snake_x, snake_y)]  # corpo da cobra
 clock = pygame.time.Clock()
 
 food_size = GRID_SIZE  # var em ingles pq é universal né pae B)
+
 def spawn_food(snake_body):
     while True:
         x = random.randrange(0, WIDTH, GRID_SIZE)
@@ -38,6 +39,8 @@ def spawn_food(snake_body):
         if (x, y) not in snake_body:
             return x, y
 
+# cria a primeira comida corretamente
+food_x, food_y = spawn_food(snake_body)
 
 game_over = False  # autoexplicativo
 
@@ -47,39 +50,38 @@ while running:  # enquanto ta rodando roda, soq em ingles
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False  # se não tiver rodando não roda
-    move_delay = max(50, base_move_delay - pontuation * 5) #fica mais rapido com apontuação, maximo para não ter vel infinita
+
+    move_delay = max(50, base_move_delay - pontuation * 5)  # fica mais rapido com apontuação
+
     keys = pygame.key.get_pressed()  # essa biblioteca já le o teclado, facilitou muito
 
     # se morreu, trava tudo e espera o reset
     if game_over:
         if keys[pygame.K_r]:  # reset pra n ter que da exit direto
-            snake_x = 300 #reseta as var tudo
+            snake_x = 300  # reseta as var tudo
             snake_y = 300
             dir_x = 1
             dir_y = 0
-            pontuation=0
+            pontuation = 0
             snake_body = [(snake_x, snake_y)]
-            food_x = random.randrange(0, WIDTH, GRID_SIZE)
-            food_y = random.randrange(0, HEIGHT, GRID_SIZE)
+            food_x, food_y = spawn_food(snake_body)
             game_over = False
+
         screen.fill((0, 0, 0))
         text = font.render(
-            f"GAME OVER - R reset | Q sair | Pontuação: {pontuation}",#escreve tudo na tela
+            f"GAME OVER - R reset | Q sair | Pontuação: {pontuation}",  # escreve tudo na tela
             True,
             (200, 200, 200)
         )
         screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2))
         pygame.display.flip()
         clock.tick(60)
-        if keys[pygame.K_q]:  #pra quitt
 
+        if keys[pygame.K_q]:  # pra quitt
             pygame.quit()
             sys.exit()
 
-
-        continue#trava o codigo ate o ser querer fazer alguma coisa
-
-
+        continue  # trava o codigo ate o ser querer fazer alguma coisa
 
     # controle da cobra (não deixa inverter)
     if keys[pygame.K_UP] and dir_y == 0:
@@ -120,24 +122,21 @@ while running:  # enquanto ta rodando roda, soq em ingles
     # apaga a tela
     screen.fill((0, 0, 0))
 
-    #desenha a cobrona
+    # desenha a cobrona
     for x, y in snake_body:
         pygame.draw.rect(screen, (0, 200, 0), (x, y, GRID_SIZE, GRID_SIZE))
 
     food_rect = pygame.Rect(food_x, food_y, food_size, food_size)  # comida
     pygame.draw.rect(screen, (200, 0, 0), food_rect)
 
-
-    if snake_body[0] == (food_x, food_y): #cobra come comida huahaha
-        food_x = random.randrange(0, WIDTH, GRID_SIZE)
-        food_y = random.randrange(0, HEIGHT, GRID_SIZE)
-        pontuation +=1
+    if snake_body[0] == (food_x, food_y):  # cobra come comida huahaha
+        food_x, food_y = spawn_food(snake_body)
+        pontuation += 1
         snake_body.append(snake_body[-1])  # se come fica grande
 
     pygame.display.flip()
     clock.tick(60)  # pra n ser maluco esse tempo tá ok
 
 pygame.quit()
-sys.exit()
- #gg
+sys.exit() #gg
 
