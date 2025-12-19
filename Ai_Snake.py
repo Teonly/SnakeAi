@@ -1,4 +1,5 @@
 #codigo do humano modificado com as interaçoes de ia e apagando as do usuario, muitos comentarios foram perdidos or conta da quantidade de mudanças que ocorreram no codigo e mudanças na ia
+
 import pygame  # importando os coisa
 import sys
 import random  # preocupado porque esta com cor de comentario, deve ser por conta do pc batata (tomara)
@@ -19,33 +20,37 @@ snake_y = 300
 pontuation = 0  # pontuation :p
 
 base_move_delay = 150  # tempo ok de passo inicial
-move_delay = max(50, base_move_delay - pontuation * 5)  # fica mais rapido com apontuação
+move_delay = base_move_delay  # começa no valor base
 
 last_move = pygame.time.get_ticks()
 
 
 dir_x = 1# começa andando pra direita tipo o game de verdade
 dir_y = 0
+
 snake_body = [(snake_x, snake_y)]  # corpo da cobra
 clock = pygame.time.Clock()
-food_size = GRID_SIZE  #tds as var em ingles pq é universal né pae B)
 
-def spawn_food(snake_body):
-    while True:
-        x = random.randrange(0, WIDTH, GRID_SIZE)
-        y = random.randrange(0, HEIGHT, GRID_SIZE)
-
-        # garante que a comida não nasce dentro da cobra
-        if (x, y) not in snake_body:
-            return x, y
-
-
+food_size = GRID_SIZE  # tds as var em ingles pq é universal né pae B)
 
 game_over = False  # autoexplicativo
 
 
 
-ai_lock = 0          # quantos passos a decisão fica travada
+def spawn_food(snake_body):# garante que a comida nunca nasce dentro da cobra
+    while True:
+        x = random.randrange(0, WIDTH, GRID_SIZE)
+        y = random.randrange(0, HEIGHT, GRID_SIZE)
+
+        if (x, y) not in snake_body:
+            return x, y
+
+
+
+food_x, food_y = spawn_food(snake_body)# cria a primeira comida corretamente
+
+
+ai_lock = 3          # quantos passos a decisão fica travada
 locked_dir = None    # direção travada
 
 
@@ -65,21 +70,23 @@ def safe_go_to_food(snake_body, current_dir):
 
     for dx, dy in DIRECTIONS.values():
 
-        if (-dx, -dy) == current_dir:  # não deixa inverter
+
+        if (-dx, -dy) == current_dir:# não deixa inverter
             continue
 
         new_x = head_x + dx * GRID_SIZE
         new_y = head_y + dy * GRID_SIZE
 
 
-        if new_x < 0 or new_x >= WIDTH or new_y < 0 or new_y >= HEIGHT:
+        if new_x < 0 or new_x >= WIDTH or new_y < 0 or new_y >= HEIGHT:# parede
             continue
 
 
-        if (new_x, new_y) in snake_body:
+        if (new_x, new_y) in snake_body:  # corpo
             continue
 
-        dist = abs(new_x - food_x) + abs(new_y - food_y)  # distância até a comida
+
+        dist = abs(new_x - food_x) + abs(new_y - food_y)# distância até a comida
 
 
         temp_body = [(new_x, new_y)] + snake_body[:-1]# simulação simples de segurança
@@ -96,7 +103,8 @@ def safe_go_to_food(snake_body, current_dir):
             ):
                 escape += 1
 
-        if escape == 0:
+
+        if escape == 0: # se não tem saída, ignora
             continue
 
         if dist < best_dist:
@@ -115,18 +123,19 @@ def follow_tail(snake_body, current_dir):
 
     for dx, dy in DIRECTIONS.values():
 
-        if (-dx, -dy) == current_dir:
+
+        if (-dx, -dy) == current_dir:# não inverte a direção
             continue
 
         new_x = head_x + dx * GRID_SIZE
         new_y = head_y + dy * GRID_SIZE
 
-        # parede
-        if new_x < 0 or new_x >= WIDTH or new_y < 0 or new_y >= HEIGHT:
+
+        if new_x < 0 or new_x >= WIDTH or new_y < 0 or new_y >= HEIGHT: # parede
             continue
 
-        # ignora o último segmento pq o rabo anda
-        if (new_x, new_y) in snake_body[:-1]:
+
+        if (new_x, new_y) in snake_body[:-1]: # ignora o último segmento pq o rabo anda
             continue
 
         dist = abs(new_x - tail_x) + abs(new_y - tail_y)
@@ -148,16 +157,15 @@ while running:  # enquanto ta rodando roda, soq em ingles
     keys = pygame.key.get_pressed()
 
 
-    if game_over:# se morreu, trava tudo e espera o reset
-        if keys[pygame.K_r]:
-            snake_x = 300# rexseta as var
+    if game_over:
+        if keys[pygame.K_r]: # se morreu, trava tudo e espera o reset
+            snake_x = 300  # reseta as var
             snake_y = 300
             dir_x = 1
             dir_y = 0
             pontuation = 0
             snake_body = [(snake_x, snake_y)]
-            food_x = random.randrange(0, WIDTH, GRID_SIZE)
-            food_y = random.randrange(0, HEIGHT, GRID_SIZE)
+            food_x, food_y = spawn_food(snake_body)
             game_over = False
 
         screen.fill((0, 0, 0))
@@ -177,8 +185,7 @@ while running:  # enquanto ta rodando roda, soq em ingles
         continue
 
 
-
-
+    # lógica da IA
     if ai_lock > 0 and locked_dir:
         dir_x, dir_y = locked_dir
         ai_lock -= 1
@@ -188,15 +195,13 @@ while running:  # enquanto ta rodando roda, soq em ingles
         if move:
             locked_dir = move
             dir_x, dir_y = move
-            ai_lock = 5  # mantém a decisão por alguns passos
+            ai_lock = 5  # trava a decisão por alguns passos
         else:
             move = follow_tail(snake_body, (dir_x, dir_y))
             if move:
                 locked_dir = move
                 dir_x, dir_y = move
                 ai_lock = 3
-
-
 
 
     current_time = pygame.time.get_ticks()
@@ -209,28 +214,36 @@ while running:  # enquanto ta rodando roda, soq em ingles
 
         snake_body.insert(0, (snake_x, snake_y))
 
+
         if (snake_x, snake_y) in snake_body[1:]:
-            game_over = True
+            game_over = True # colisão com o corpo
 
         snake_body.pop()
 
 
+
     if snake_x < 0 or snake_x >= WIDTH or snake_y < 0 or snake_y >= HEIGHT:
-        game_over = True
+        game_over = True# colisão com parede
+
 
     screen.fill((0, 0, 0))
 
+
     for x, y in snake_body:
-        pygame.draw.rect(screen, (0, 200, 0), (x, y, GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen, (0, 200, 0), (x, y, GRID_SIZE, GRID_SIZE))# desenha a cobrona
+
 
     food_rect = pygame.Rect(food_x, food_y, food_size, food_size)
-    pygame.draw.rect(screen, (200, 0, 0), food_rect)
+    pygame.draw.rect(screen, (200, 0, 0), food_rect) # desenha a comida
+
 
     if snake_body[0] == (food_x, food_y):
-        food_x = random.randrange(0, WIDTH, GRID_SIZE)
-        food_y = random.randrange(0, HEIGHT, GRID_SIZE)
+        food_x, food_y = spawn_food(snake_body)# comeu
         pontuation += 1
         snake_body.append(snake_body[-1])
+
+
+        move_delay = max(50, base_move_delay - pontuation * 5) # acelera com a pontuação
 
     pygame.display.flip()
     clock.tick(60)
